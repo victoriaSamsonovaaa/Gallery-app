@@ -39,6 +39,7 @@ class PhotosSearchingViewController: UICollectionViewController {
         navigationItem.searchController = searchField
         searchField.hidesNavigationBarDuringPresentation = false
         searchField.obscuresBackgroundDuringPresentation = false
+        searchField.searchBar.delegate = self
     }
     
     private func creatingCollectionView() {
