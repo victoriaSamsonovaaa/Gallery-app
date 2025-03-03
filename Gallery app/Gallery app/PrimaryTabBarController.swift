@@ -25,3 +25,5 @@ class PrimaryTabBarController: UITabBarController {
         viewControllers = [galleryNavigationVC, favouriteNavigationVC]
     }
 }
+
+
