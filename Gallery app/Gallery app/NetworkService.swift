@@ -11,7 +11,8 @@ class NetworkService {
     func mainRequest(queryWord: String, completion: @escaping (Data?, Error?) -> Void) {
         let url = self.returnURL(queryWord: queryWord)
         var request = URLRequest(url: url)
-        request.setValue("Client-ID key", forHTTPHeaderField: "Authorization")
+        let myAPI = self.getAPI()
+        request.setValue("Client-ID \(myAPI)", forHTTPHeaderField: "Authorization")
         //request.allHTTPHeaderFields = prepareHeader()
         request.httpMethod = "get"
         let task = createDataTask(from: request, completion: completion)
@@ -32,6 +33,20 @@ class NetworkService {
             URLQueryItem(name: $0, value: $1)
         }
         return components.url!
+    }
+    
+    private func getAPI() -> String {
+        print("aaaaa")
+        guard let infoDictionary: [String: Any] = Bundle.main.infoDictionary else {
+            print("didn't get a dictionary")
+            return "didn't get a dictionary"
+        }
+        guard let myApiKey: String = infoDictionary["MyAPI"] as? String else {
+            print("didn't get a key")
+            return "didn't get a key"
+        }
+        print("Here's your api key value -> \(myApiKey)")
+        return myApiKey
     }
     
     private func createDataTask(from request: URLRequest, completion: @escaping (Data?, Error?) -> Void) -> URLSessionDataTask {

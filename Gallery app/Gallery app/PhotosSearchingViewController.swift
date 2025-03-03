@@ -9,6 +9,10 @@ import Foundation
 import UIKit
 
 class PhotosSearchingViewController: UICollectionViewController {
+    
+    var dataFetcher = DataFetcher()
+    var timer = Timer()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         creatingNavigationBar()
@@ -37,6 +41,7 @@ class PhotosSearchingViewController: UICollectionViewController {
     private func creatingSearchBar() {
         let searchField = UISearchController(searchResultsController: nil)
         navigationItem.searchController = searchField
+        navigationItem.hidesSearchBarWhenScrolling = false
         searchField.hidesNavigationBarDuringPresentation = false
         searchField.obscuresBackgroundDuringPresentation = false
         searchField.searchBar.delegate = self
