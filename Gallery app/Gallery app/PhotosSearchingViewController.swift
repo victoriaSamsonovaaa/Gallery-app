@@ -13,6 +13,8 @@ class PhotosSearchingViewController: UICollectionViewController {
     var dataFetcher = DataFetcher()
     var timer = Timer()
     
+    var photos = [SinglePhotoModel]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         creatingNavigationBar()
@@ -21,13 +23,15 @@ class PhotosSearchingViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CellId", for: indexPath)
-        cell.backgroundColor = .cyan
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SinglePhotoCell.reuseId, for: indexPath) as? SinglePhotoCell else {
+            return UICollectionViewCell()
+        }
+        cell.singlePhoto = photos[indexPath.item]
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        return photos.count
     }
     
     private func creatingNavigationBar() {
@@ -45,9 +49,10 @@ class PhotosSearchingViewController: UICollectionViewController {
         searchField.hidesNavigationBarDuringPresentation = false
         searchField.obscuresBackgroundDuringPresentation = false
         searchField.searchBar.delegate = self
+        searchField.searchBar.showsSearchResultsButton = true
     }
     
     private func creatingCollectionView() {
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "CellId")
+        collectionView.register(SinglePhotoCell.self, forCellWithReuseIdentifier: SinglePhotoCell.reuseId)
     }
 }

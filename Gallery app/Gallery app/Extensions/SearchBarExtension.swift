@@ -9,15 +9,21 @@ import Foundation
 import UIKit
 
 extension PhotosSearchingViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print(searchText)
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            self.dataFetcher.fetchImages(queryWord: searchText) { searchResults in
-                searchResults?.results.map {
-                    print($0.urls["thumb"])
-            }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchBar.text, !searchText.isEmpty else { return }
+        print("Searching for: \(searchText)")
+
+        dataFetcher.fetchImages(queryWord: searchText) { [weak self] searchResults in
+            guard let fetchedPhotos = searchResults else { return }
+            self?.photos = fetchedPhotos.results
+            self?.collectionView.reloadData()
         }
-        }
+
+        searchBar.resignFirstResponder()
     }
 }
+
+extension PhotosSearchingViewController: UICollectionViewDelegateFlowLayout {
+    
+}
+

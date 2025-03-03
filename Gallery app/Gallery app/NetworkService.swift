@@ -23,7 +23,7 @@ class NetworkService {
         var parametrs = [String: String]()
         parametrs["query"] = queryWord
         parametrs["page"] = String(1)
-        parametrs["per_page"] = String(36)
+        parametrs["per_page"] = String(30)
         
         var components = URLComponents()
         components.scheme = "https"
