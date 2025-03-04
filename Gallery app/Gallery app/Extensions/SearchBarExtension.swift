@@ -21,5 +21,18 @@ extension PhotosSearchingViewController: UISearchBarDelegate {
 
         searchBar.resignFirstResponder()
     }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        photos.removeAll()
+        collectionView.reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            photos.removeAll()
+            collectionView.reloadData()
+        }
+    }
 }
 
