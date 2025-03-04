@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import SwiftData
 import UIKit
 
 class PhotoDetailViewController:UIViewController {
     var photo: SinglePhotoModel!
-
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 12
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,11 +31,30 @@ class PhotoDetailViewController:UIViewController {
         return label
     }()
     
+    private let likeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = .red
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let likeDescription: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .red
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Like this photo"
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         view.addSubview(imageView)
         view.addSubview(descriptionLabel)
+        view.addSubview(likeButton)
 
         setLayout()
         loadImage()
@@ -54,23 +74,32 @@ class PhotoDetailViewController:UIViewController {
     }
 
     private func setLayout() {
-        let stackView = UIStackView(arrangedSubviews: [imageView, descriptionLabel])
+        let horizStackView = UIStackView(arrangedSubviews: [likeButton, likeDescription])
+        horizStackView.axis = .horizontal
+        horizStackView.spacing = 10
+        horizStackView.alignment = .leading
+        
+        let stackView = UIStackView(arrangedSubviews: [imageView, horizStackView, descriptionLabel])
         stackView.axis = .vertical
         stackView.spacing = 16
-        stackView.alignment = .center
+        stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(stackView)
-
+        
+        let imageRatio = CGFloat(photo.height) / CGFloat(photo.width)
+        let imageWidth = view.frame.width * 0.9
+        let imageHeight = imageWidth * imageRatio
+        
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
 
-            imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.75),
+            imageView.widthAnchor.constraint(equalToConstant: imageWidth),
+            imageView.heightAnchor.constraint(equalToConstant: imageHeight),
 
-            descriptionLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            descriptionLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
 }

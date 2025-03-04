@@ -12,13 +12,13 @@ class SinglePhotoCell: UICollectionViewCell {
     
     static let reuseId = "singlePhotoCell"
     
-//    private let likeButton: UIButton = {
-//        let button = UIButton(type: .system)
-//        button.setImage(UIImage(systemName: "heart"), for: .normal)
-//        button.tintColor = .white
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        return button
-//    }()
+    private let likeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = .red
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     private let photoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -35,26 +35,15 @@ class SinglePhotoCell: UICollectionViewCell {
         }
     }
     
-//    override var isSelected: Bool {
-//        didSet {
-//            updateSelectedImageView()
-//        }
-//    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         photoImageView.image = nil
     }
     
-//    private func updateSelectedImageView() {
-//        photoImageView.alpha = isSelected ? 0.6 : 1
-//        heart.alpha = isSelected ? 1 : 0
-//    }
-    
     private func loadImage() {
-        guard let singlePhoto = singlePhoto,
-              let photoURLString = singlePhoto.urls["thumb"],
-              let url = URL(string: photoURLString) else { return }
+        guard let singlePhoto = singlePhoto, let photoURLString = singlePhoto.urls["thumb"], let url = URL(string: photoURLString) else {
+            return
+        }
         
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             if let data = data, let image = UIImage(data: data) {
@@ -73,20 +62,23 @@ class SinglePhotoCell: UICollectionViewCell {
         photoImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
     }
     
-//    private func setHeart() {
-//        addSubview(likeButton)
-//        likeButton.trailingAnchor.constraint(equalTo: photoImageView.trailingAnchor, constant: -6).isActive = true
-//        likeButton.bottomAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: -6).isActive = true
-//    }
+    private func setHeart() {
+        addSubview(likeButton)
+        NSLayoutConstraint.activate([
+            likeButton.trailingAnchor.constraint(equalTo: photoImageView.trailingAnchor, constant: -8),
+            likeButton.bottomAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: -8),
+            likeButton.widthAnchor.constraint(equalToConstant: 30),
+            likeButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setPhoto()
-    //    setHeart()
+        setHeart()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }

@@ -8,12 +8,14 @@
 import Foundation
 import UIKit
 
-class PhotosSearchingViewController: UICollectionViewController {
+class PhotosSearchingViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var dataFetcher = DataFetcher()
     var timer = Timer()
     
     var photos = [SinglePhotoModel]()
+    private var photosInRow: CGFloat = 2
+    private let sectionInserts: CGFloat = 14
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,11 +37,23 @@ class PhotosSearchingViewController: UICollectionViewController {
         return photos.count
     }
     
+    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = photos[indexPath.item]
         let detailViewController = PhotoDetailViewController()
         detailViewController.photo = photo
         navigationController?.pushViewController(detailViewController, animated: true)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let spacing: CGFloat = 10
+        let totalSpacing = (photosInRow - 1) * spacing + sectionInserts * 2
+        let availableWidth = view.frame.width - totalSpacing
+        let widthPerItem = availableWidth / photosInRow
+        let photo = photos[indexPath.item]
+        let height = CGFloat(photo.height) * widthPerItem / CGFloat(photo.width)
+
+        return CGSize(width: widthPerItem, height: height)
     }
 
     
@@ -62,21 +76,16 @@ class PhotosSearchingViewController: UICollectionViewController {
     
     private func creatingCollectionView() {
         collectionView.register(SinglePhotoCell.self, forCellWithReuseIdentifier: SinglePhotoCell.reuseId)
+        collectionView.layoutMargins = UIEdgeInsets(top: 2, left: 14, bottom: 2, right: 14)
+        collectionView.contentInsetAdjustmentBehavior = .automatic
     }
     
     private func setCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 10
-        let itemsPerRow: CGFloat = 2
-        let paddingWidth = spacing * (itemsPerRow + 1)
-        let availableWidth = view.frame.width - paddingWidth
-        let itemWidth = availableWidth / itemsPerRow
-        
-        layout.itemSize = CGSize(width: itemWidth, height: itemWidth * 1.2) 
         layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
-        
         collectionView.collectionViewLayout = layout
     }
 }
