@@ -23,7 +23,3 @@ extension PhotosSearchingViewController: UISearchBarDelegate {
     }
 }
 
-extension PhotosSearchingViewController: UICollectionViewDelegateFlowLayout {
-    
-}
-

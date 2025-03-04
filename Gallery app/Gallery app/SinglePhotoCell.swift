@@ -12,20 +12,20 @@ class SinglePhotoCell: UICollectionViewCell {
     
     static let reuseId = "singlePhotoCell"
     
-    private let heart: UIImageView = {
-        let image = UIImage(systemName: "heart.fill")
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = .systemRed
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.alpha = 0
-        return imageView
-    }()
+//    private let likeButton: UIButton = {
+//        let button = UIButton(type: .system)
+//        button.setImage(UIImage(systemName: "heart"), for: .normal)
+//        button.tintColor = .white
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        return button
+//    }()
     
     private let photoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = UIColor(#colorLiteral(red: 0.9952972531, green: 0.8822068572, blue: 0.8323535323, alpha: 1))
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -73,16 +73,16 @@ class SinglePhotoCell: UICollectionViewCell {
         photoImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
     }
     
-    private func setHeart() {
-        addSubview(heart)
-        heart.trailingAnchor.constraint(equalTo: photoImageView.trailingAnchor, constant: -6).isActive = true
-        heart.bottomAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: -6).isActive = true
-    }
+//    private func setHeart() {
+//        addSubview(likeButton)
+//        likeButton.trailingAnchor.constraint(equalTo: photoImageView.trailingAnchor, constant: -6).isActive = true
+//        likeButton.bottomAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: -6).isActive = true
+//    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setPhoto()
-        setHeart()
+    //    setHeart()
     }
     
     required init?(coder: NSCoder) {

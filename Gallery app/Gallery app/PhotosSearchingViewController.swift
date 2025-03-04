@@ -19,6 +19,7 @@ class PhotosSearchingViewController: UICollectionViewController {
         super.viewDidLoad()
         creatingNavigationBar()
         creatingSearchBar()
+        setCollectionViewLayout()
         creatingCollectionView()
     }
     
@@ -33,6 +34,14 @@ class PhotosSearchingViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photos.count
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photo = photos[indexPath.item]
+        let detailViewController = PhotoDetailViewController()
+        detailViewController.photo = photo
+        navigationController?.pushViewController(detailViewController, animated: true)
+    }
+
     
     private func creatingNavigationBar() {
         let appTitle = UILabel()
@@ -49,10 +58,25 @@ class PhotosSearchingViewController: UICollectionViewController {
         searchField.hidesNavigationBarDuringPresentation = false
         searchField.obscuresBackgroundDuringPresentation = false
         searchField.searchBar.delegate = self
-        searchField.searchBar.showsSearchResultsButton = true
     }
     
     private func creatingCollectionView() {
         collectionView.register(SinglePhotoCell.self, forCellWithReuseIdentifier: SinglePhotoCell.reuseId)
+    }
+    
+    private func setCollectionViewLayout() {
+        let layout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 10
+        let itemsPerRow: CGFloat = 2
+        let paddingWidth = spacing * (itemsPerRow + 1)
+        let availableWidth = view.frame.width - paddingWidth
+        let itemWidth = availableWidth / itemsPerRow
+        
+        layout.itemSize = CGSize(width: itemWidth, height: itemWidth * 1.2) 
+        layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)
+        layout.minimumLineSpacing = spacing
+        layout.minimumInteritemSpacing = spacing
+        
+        collectionView.collectionViewLayout = layout
     }
 }
