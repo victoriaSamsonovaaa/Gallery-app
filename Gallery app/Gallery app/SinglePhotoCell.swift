@@ -29,9 +29,10 @@ class SinglePhotoCell: UICollectionViewCell {
         return imageView
     }()
     
-    var singlePhoto: SinglePhotoModel! {
+    var viewModel: PhotoViewModel! {
         didSet {
-            loadImage()
+            photoImageView.image = nil
+            bindViewModel()
         }
     }
     
@@ -40,18 +41,12 @@ class SinglePhotoCell: UICollectionViewCell {
         photoImageView.image = nil
     }
     
-    private func loadImage() {
-        guard let singlePhoto = singlePhoto, let photoURLString = singlePhoto.urls["thumb"], let url = URL(string: photoURLString) else {
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-            if let data = data, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self?.photoImageView.image = image
-                }
+    private func bindViewModel() {
+        viewModel.loadImage { [weak self] image in
+            DispatchQueue.main.async {
+                self?.photoImageView.image = image
             }
-        }.resume()
+        }
     }
     
     private func setPhoto() {

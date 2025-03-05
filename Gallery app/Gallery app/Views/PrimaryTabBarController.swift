@@ -13,7 +13,6 @@ class PrimaryTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //tabBar.backgroundColor = .gray
-        
         let galleryVC = PhotosSearchingViewController(collectionViewLayout: UICollectionViewFlowLayout())
         let galleryNavigationVC = UINavigationController(rootViewController: galleryVC)
         galleryNavigationVC.tabBarItem = UITabBarItem(title: "Gallery", image: UIImage(systemName: "photo"), selectedImage: UIImage(systemName: "photo.fill"))

@@ -10,7 +10,7 @@ import SwiftData
 import UIKit
 
 class PhotoDetailViewController:UIViewController {
-    var photo: SinglePhotoModel!
+    var viewModel: PhotoViewModel!
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -57,19 +57,14 @@ class PhotoDetailViewController:UIViewController {
         view.addSubview(likeButton)
 
         setLayout()
-        loadImage()
-        descriptionLabel.text = photo.description ?? "Seems that this photo doesn't have a description "
+        bindViewModel()
     }
     
-    private func loadImage() {
-        guard let urlString = photo.urls["thumb"], let url = URL(string: urlString) else { return }
+    private func bindViewModel() {
+        descriptionLabel.text = viewModel.photo.description ?? "Seems that this photo doesn't have a description "
 
-        DispatchQueue.global().async {
-            if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                }
-            }
+        viewModel.loadImage { [weak self] image in
+            self?.imageView.image = image
         }
     }
 
@@ -87,7 +82,7 @@ class PhotoDetailViewController:UIViewController {
 
         view.addSubview(stackView)
         
-        let imageRatio = CGFloat(photo.height) / CGFloat(photo.width)
+        let imageRatio = CGFloat(viewModel.photo.height) / CGFloat(viewModel.photo.width)
         let imageWidth = view.frame.width * 0.9
         let imageHeight = imageWidth * imageRatio
         
