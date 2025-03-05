@@ -12,6 +12,25 @@ import UIKit
 class PhotoDetailViewController:UIViewController {
     var viewModel: PhotoViewModel!
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        self.tabBarController?.tabBar.isHidden = true
+//    }
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let scrollStackViewContainer: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -52,10 +71,7 @@ class PhotoDetailViewController:UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        view.addSubview(imageView)
-        view.addSubview(descriptionLabel)
-        view.addSubview(likeButton)
-
+        
         setLayout()
         bindViewModel()
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
@@ -63,12 +79,12 @@ class PhotoDetailViewController:UIViewController {
     
     private func bindViewModel() {
         descriptionLabel.text = viewModel.photo.description ?? "Seems that this photo doesn't have a description "
-
+        
         viewModel.loadImage { [weak self] image in
             self?.imageView.image = image
         }
     }
-
+    
     @objc private func likeButtonTapped() {
         guard let image = imageView.image else { return }
         viewModel.toggleFavorite(image: image)
@@ -80,27 +96,34 @@ class PhotoDetailViewController:UIViewController {
         horizStackView.spacing = 10
         horizStackView.alignment = .leading
         
-        let stackView = UIStackView(arrangedSubviews: [imageView, horizStackView, descriptionLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 16
-        stackView.alignment = .leading
-        stackView.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(stackView)
-        
-        let imageRatio = CGFloat(viewModel.photo.height) / CGFloat(viewModel.photo.width)
-        let imageWidth = view.frame.width * 0.9
-        let imageHeight = imageWidth * imageRatio
+        view.addSubview(scrollView)
+        scrollView.addSubview(scrollStackViewContainer)
+        scrollStackViewContainer.addArrangedSubview(imageView)
+        scrollStackViewContainer.addArrangedSubview(descriptionLabel)
+        scrollStackViewContainer.addArrangedSubview(horizStackView)
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            imageView.widthAnchor.constraint(equalToConstant: imageWidth),
-            imageView.heightAnchor.constraint(equalToConstant: imageHeight),
+            scrollStackViewContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 20),
+            scrollStackViewContainer.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 20),
+            scrollStackViewContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -20),
+            scrollStackViewContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -20),
+            scrollStackViewContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -40),
 
-            descriptionLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            imageView.widthAnchor.constraint(equalTo: scrollStackViewContainer.widthAnchor),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: CGFloat(viewModel.photo.height) / CGFloat(viewModel.photo.width)),
+
+            horizStackView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
+            horizStackView.trailingAnchor.constraint(lessThanOrEqualTo: scrollStackViewContainer.trailingAnchor),
+
+            likeButton.widthAnchor.constraint(equalToConstant: 24),
+            likeButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 }

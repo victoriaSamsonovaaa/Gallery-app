@@ -15,17 +15,27 @@ class PhotoViewModel {
 
     init(photo: SinglePhotoModel) {
         self.photo = photo
+        loadImageFromCoreData()
     }
 
-    func loadImage(completion: @escaping (UIImage?) -> Void) {
-        guard let urlString = photo.urls?["thumb"] else {
-            completion(nil)
-            return
+    private func loadImageFromCoreData() {
+        if let imageData = coreDataManager.fetchImageData(for: photo.id) {
+            self.image = UIImage(data: imageData)
         }
-
-        ImageLoader.shared.loadImage(from: urlString) { [weak self] image in
-            self?.image = image
+    }
+    
+    func loadImage(completion: @escaping (UIImage?) -> Void) {
+        if let image = self.image {
             completion(image)
+        } else {
+            guard let urlString = photo.urls?["thumb"] else {
+                completion(nil)
+                return
+            }
+            ImageLoader.shared.loadImage(from: urlString) { [weak self] image in
+                self?.image = image
+                completion(image)
+            }
         }
     }
     

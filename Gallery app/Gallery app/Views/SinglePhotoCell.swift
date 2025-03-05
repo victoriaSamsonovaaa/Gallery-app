@@ -26,9 +26,9 @@ class SinglePhotoCell: UICollectionViewCell {
         imageView.backgroundColor = UIColor(#colorLiteral(red: 0.9952972531, green: 0.8822068572, blue: 0.8323535323, alpha: 1))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 10
         return imageView
     }()
-    
     var viewModel: PhotoViewModel! {
         didSet {
             photoImageView.image = nil
@@ -72,11 +72,6 @@ class SinglePhotoCell: UICollectionViewCell {
         
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
-    
-//    @objc private func likeButtonTapped() {
-//        guard let image = photoImageView.image else { return }
-//        delegate?.toggleFavorite(photo: photo, image: image)
-//    }
     
     @objc private func likeButtonTapped() {
         guard let image = photoImageView.image else { return }

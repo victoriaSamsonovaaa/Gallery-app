@@ -65,6 +65,19 @@ class CoreDataManager {
         }
     }
 
+    func fetchImageData(for photoID: String) -> Data? {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id = %@", photoID)
+        do {
+            if let photo = try context.fetch(fetchRequest).first {
+                return photo.content
+            }
+        } catch {
+            print("failed to fetch image data: \(error.localizedDescription)")
+        }
+        return nil
+    }
     
     private func isPhotoInFavorites(photoID: String) -> Photo? {
         let context = persistentContainer.viewContext
@@ -96,14 +109,3 @@ class CoreDataManager {
     }
 
 }
-
-
-
-//        if let urls = photo.urls {
-//            do {
-//                let jsonData = try JSONSerialization.data(withJSONObject: urls, options: [])
-//                favoritePhoto.urls = try JSONSerialization.jsonObject(with: jsonData, options: []) as? NSDictionary
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
