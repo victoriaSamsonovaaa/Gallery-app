@@ -18,9 +18,11 @@ class Photo: NSManagedObject {
         return NSFetchRequest<Photo>(entityName: "Photo")
     }
 
-    @NSManaged public var content: UIImage?
-    @NSManaged public var descr: String?
+    @NSManaged public var content: Data?
+    @NSManaged public var height: Int16
     @NSManaged public var id: String?
+    @NSManaged public var photoDescription: String?
+    @NSManaged public var width: Int16
 
 }
 

@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class PhotoViewModel {
+    private let coreDataManager = CoreDataManager.shared
     let photo: SinglePhotoModel
     private(set) var image: UIImage?
 
@@ -17,7 +18,7 @@ class PhotoViewModel {
     }
 
     func loadImage(completion: @escaping (UIImage?) -> Void) {
-        guard let urlString = photo.urls["thumb"] else {
+        guard let urlString = photo.urls?["thumb"] else {
             completion(nil)
             return
         }
@@ -26,6 +27,10 @@ class PhotoViewModel {
             self?.image = image
             completion(image)
         }
+    }
+    
+    func toggleFavorite(image: UIImage) {
+        coreDataManager.toggleFavorite(photo: photo, image: image)
     }
 }
 

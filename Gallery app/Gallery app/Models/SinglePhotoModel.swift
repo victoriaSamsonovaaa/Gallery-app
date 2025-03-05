@@ -11,7 +11,7 @@ struct SinglePhotoModel: Decodable {
     let id: String
     let width: Int
     let height: Int
-    let urls: [URLKing.RawValue:String]
+    let urls: [URLKing.RawValue:String]?
     let description: String?
     
     enum URLKing: String {

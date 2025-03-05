@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 class CoreDataManager {
     let persistentContainer: NSPersistentContainer
@@ -21,4 +22,88 @@ class CoreDataManager {
         }
     }
     
+    func addPhotoToFav(photo: SinglePhotoModel, image: UIImage) {
+        print("started to add")
+        let context = persistentContainer.viewContext
+        let favoritePhoto = Photo(context: context)
+        
+        favoritePhoto.id = photo.id
+        favoritePhoto.photoDescription = photo.description
+        favoritePhoto.width = Int16(photo.width)
+        favoritePhoto.height = Int16(photo.height)
+        
+        favoritePhoto.content = image.jpegData(compressionQuality: 0.9)
+        saveContext(context: context)
+        print("added")
+    }
+    
+    func removeFromFav(photo: Photo) {
+        let context = persistentContainer.viewContext
+        context.delete(photo)
+        saveContext(context: context)
+        print("removed")
+    }
+    
+    func fetchFavorites() -> [Photo] {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
+        do {
+            print("got all favourites")
+            return try context.fetch(fetchRequest)
+        } catch {
+            print("failed to fetch favorites: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    private func saveContext(context: NSManagedObjectContext) {
+        do {
+            try context.save()
+            print("saved successfully")
+        } catch {
+            print("failed to save context: \(error.localizedDescription)")
+        }
+    }
+
+    
+    private func isPhotoInFavorites(photoID: String) -> Photo? {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id = %@", photoID)
+        do {
+            return try context.fetch(fetchRequest).first
+        } catch {
+            print("failed to check favorite status: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) {
+        let context = persistentContainer.viewContext
+        if let existingPhoto = isPhotoInFavorites(photoID: photo.id) {
+            context.delete(existingPhoto)
+            print("removed from favorites")
+        } else {
+            let favoritePhoto = Photo(context: context)
+            favoritePhoto.id = photo.id
+            favoritePhoto.photoDescription = photo.description
+            favoritePhoto.width = Int16(photo.width)
+            favoritePhoto.height = Int16(photo.height)
+            favoritePhoto.content = image.jpegData(compressionQuality: 0.9)
+            print("added to favorites")
+        }
+        saveContext(context: context)
+    }
+
 }
+
+
+
+//        if let urls = photo.urls {
+//            do {
+//                let jsonData = try JSONSerialization.data(withJSONObject: urls, options: [])
+//                favoritePhoto.urls = try JSONSerialization.jsonObject(with: jsonData, options: []) as? NSDictionary
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }

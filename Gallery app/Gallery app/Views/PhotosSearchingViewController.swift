@@ -11,7 +11,6 @@ import UIKit
 class PhotosSearchingViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var viewModel = PhotosSearchingViewModel()
-    
     private var photosInRow: CGFloat = 2
     private let sectionInsets: CGFloat = 14
     
@@ -37,7 +36,9 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SinglePhotoCell.reuseId, for: indexPath) as? SinglePhotoCell else {
             return UICollectionViewCell()
         }
-        cell.viewModel = PhotoViewModel(photo: viewModel.photos[indexPath.item])
+        let photo = viewModel.photos[indexPath.item]
+        let photoViewModel = PhotoViewModel(photo: photo)
+        cell.viewModel = photoViewModel
         return cell
     }
     
@@ -54,7 +55,6 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         let widthPerItem = availableWidth / photosInRow
         let photo = viewModel.photos[indexPath.item]
         let height = CGFloat(photo.height) * widthPerItem / CGFloat(photo.width)
-
         return CGSize(width: widthPerItem, height: height)
     }
 

@@ -36,6 +36,10 @@ class SinglePhotoCell: UICollectionViewCell {
         }
     }
     
+    var photo: SinglePhotoModel!
+    
+    var delegate: PhotosSearchingViewModel?
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         photoImageView.image = nil
@@ -65,6 +69,18 @@ class SinglePhotoCell: UICollectionViewCell {
             likeButton.widthAnchor.constraint(equalToConstant: 30),
             likeButton.heightAnchor.constraint(equalToConstant: 30)
         ])
+        
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+    }
+    
+//    @objc private func likeButtonTapped() {
+//        guard let image = photoImageView.image else { return }
+//        delegate?.toggleFavorite(photo: photo, image: image)
+//    }
+    
+    @objc private func likeButtonTapped() {
+        guard let image = photoImageView.image else { return }
+        viewModel.toggleFavorite(image: image)
     }
     
     override init(frame: CGRect) {

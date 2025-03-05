@@ -7,10 +7,12 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class PhotosSearchingViewModel {
     
     private let dataFetcher = DataFetcher()
+    private let coreDataManager = CoreDataManager.shared
     var photos: [SinglePhotoModel] = []
     
     var onPhotosUpdated: (() -> Void)?
@@ -21,15 +23,17 @@ class PhotosSearchingViewModel {
         dataFetcher.fetchImages(queryWord: query) { [weak self] searchResults in
             guard let fetchedPhotos = searchResults else { return }
             self?.photos = fetchedPhotos.results
-//            if let photos2 = self?.photos {
-//                print(photos2)
-//            }
             self?.onPhotosUpdated?()
         }
+    }
+    
+    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) {
+        coreDataManager.toggleFavorite(photo: photo, image: image)
     }
     
     func clearPhotos() {
         photos.removeAll()
         onPhotosUpdated?()
     }
+
 }

@@ -58,6 +58,7 @@ class PhotoDetailViewController:UIViewController {
 
         setLayout()
         bindViewModel()
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
     private func bindViewModel() {
@@ -68,6 +69,11 @@ class PhotoDetailViewController:UIViewController {
         }
     }
 
+    @objc private func likeButtonTapped() {
+        guard let image = imageView.image else { return }
+        viewModel.toggleFavorite(image: image)
+    }
+    
     private func setLayout() {
         let horizStackView = UIStackView(arrangedSubviews: [likeButton, likeDescription])
         horizStackView.axis = .horizontal
