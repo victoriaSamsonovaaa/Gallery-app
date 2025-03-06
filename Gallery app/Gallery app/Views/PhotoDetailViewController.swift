@@ -44,10 +44,9 @@ class PhotoDetailViewController:UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let likeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.tintColor = .red
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -73,18 +72,43 @@ class PhotoDetailViewController:UIViewController {
     }
     
     private func bindViewModel() {
-        descriptionLabel.text = viewModel.photo.description ?? "Seems that this photo doesn't have a description "
-        
+        descriptionLabel.text = viewModel.photo.description ?? "Seems that this photo doesn't have a description"
         viewModel.loadImage { [weak self] image in
-            self?.imageView.image = image
+            DispatchQueue.main.async {
+                self?.imageView.image = image
+            }
         }
+        updateLikeButton()
+        updateLikeLabel()
     }
     
     @objc private func likeButtonTapped() {
         guard let image = imageView.image else { return }
-        if viewModel.toggleFavorite(image: image) {
-            
+        viewModel.isFav = viewModel.toggleFavorite(image: image)
+        NotificationCenter.default.post(name: NSNotification.Name("FavoritesUpdated"), object: nil)
+        updateLikeButton()
+        updateLikeLabel()
+        if !viewModel.isFav {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                if let navController = self.navigationController {
+                    if let favVC = navController.viewControllers.first(where: { $0 is FavouritesPhotosViewController }) as? FavouritesPhotosViewController {
+                        favVC.viewModel.refreshFavorites()
+                        favVC.collectionView.reloadData()
+                    }
+                }
+                self.navigationController?.popViewController(animated: true)
+            }
         }
+    }
+
+
+    private func updateLikeLabel() {
+        likeDescription.textColor = viewModel.isFav ? .red : .lightGray
+    }
+
+    private func updateLikeButton() {
+        let imageName = viewModel.isFav ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
     
     private func setLayout() {

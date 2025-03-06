@@ -36,8 +36,6 @@ class SinglePhotoCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 10
         return imageView
     }()
-
-
     
     var photo: SinglePhotoModel!
     
@@ -82,13 +80,14 @@ class SinglePhotoCell: UICollectionViewCell {
         let imageName = isFav ? "heart.fill" : "heart"
         likeButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
-    
+
     @objc private func likeButtonTapped() {
         guard let image = photoImageView.image else { return }
         isFav = viewModel.toggleFavorite(image: image)
+        NotificationCenter.default.post(name: NSNotification.Name("FavoritesUpdated"), object: nil)
         updateLikeButton()
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setPhoto()

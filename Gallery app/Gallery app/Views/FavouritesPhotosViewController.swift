@@ -16,6 +16,8 @@ class FavouritesPhotosViewController: UICollectionViewController, UICollectionVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFavorites), name: NSNotification.Name("FavoritesUpdated"), object: nil)
+
         setCollectionViewLayout()
         creatingNavigationBar()
         creatingCollectionView()
@@ -84,6 +86,11 @@ class FavouritesPhotosViewController: UICollectionViewController, UICollectionVi
         layout.minimumLineSpacing = spacing
         layout.minimumInteritemSpacing = spacing
         collectionView.collectionViewLayout = layout
+    }
+    
+    @objc private func updateFavorites() {
+        viewModel.refreshFavorites()
+        collectionView.reloadData()
     }
 }
 

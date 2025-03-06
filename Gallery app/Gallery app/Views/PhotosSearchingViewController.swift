@@ -20,7 +20,7 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         creatingSearchBar()
         setCollectionViewLayout()
         creatingCollectionView()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFavorites), name: NSNotification.Name("FavoritesUpdated"), object: nil)
         viewModel.onPhotosUpdated = { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
@@ -90,4 +90,9 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         layout.minimumInteritemSpacing = spacing
         collectionView.collectionViewLayout = layout
     }
+    
+    @objc private func updateFavorites() {
+        collectionView.reloadData()  
+    }
+
 }

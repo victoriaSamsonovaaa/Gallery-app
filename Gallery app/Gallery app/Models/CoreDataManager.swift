@@ -84,14 +84,14 @@ class CoreDataManager {
     }
 
     
-    private func isPhotoInFavorites(photoID: String) -> Photo? {
+    func fetchPhotoFromFavorites(photoID: String) -> Photo? {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id = %@", photoID)
         do {
             return try context.fetch(fetchRequest).first
         } catch {
-            print("failed to check favorite status: \(error.localizedDescription)")
+            print("failed to fetch photo: \(error.localizedDescription)")
             return nil
         }
     }
@@ -99,7 +99,7 @@ class CoreDataManager {
     func toggleFavorite(photo: SinglePhotoModel, image: UIImage) -> Bool {
         let context = persistentContainer.viewContext
         var isFav: Bool = false
-        if let existingPhoto = isPhotoInFavorites(photoID: photo.id) {
+        if let existingPhoto = fetchPhotoFromFavorites(photoID: photo.id) {
             context.delete(existingPhoto)
             print("removed from favorites")
             isFav = false

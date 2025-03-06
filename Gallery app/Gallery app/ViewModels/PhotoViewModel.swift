@@ -18,7 +18,10 @@ class PhotoViewModel {
         self.photo = photo
         self.isFav = CoreDataManager.shared.isPhotoInFavorites(photoID: photo.id)
         loadImageFromCoreData()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFavoriteStatus), name: NSNotification.Name("FavoritesUpdated"), object: nil)
     }
+
 
     private func loadImageFromCoreData() {
         if let imageData = coreDataManager.fetchImageData(for: photo.id) {
@@ -43,11 +46,17 @@ class PhotoViewModel {
     
     func toggleFavorite(image: UIImage) -> Bool {
         if coreDataManager.toggleFavorite(photo: photo, image: image) {
-            isFav = true
-        } else {
-            isFav = false
+            isFav.toggle()
         }
         return isFav
+    }
+    
+    func checkIfFavorite() {
+        isFav = coreDataManager.isPhotoInFavorites(photoID: photo.id)
+    }
+    
+    @objc private func updateFavoriteStatus() {
+        isFav = CoreDataManager.shared.isPhotoInFavorites(photoID: photo.id)
     }
 }
 
