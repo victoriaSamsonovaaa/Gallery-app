@@ -47,6 +47,8 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = PhotoDetailViewController()
+        detailViewController.photos = viewModel.photos
+        detailViewController.currentIndex = indexPath.item
         detailViewController.viewModel = PhotoViewModel(photo: viewModel.photos[indexPath.item])
         navigationController?.pushViewController(detailViewController, animated: true)
     }

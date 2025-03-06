@@ -33,7 +33,7 @@ class SinglePhotoCell: UICollectionViewCell {
         imageView.backgroundColor = UIColor(#colorLiteral(red: 0.9952972531, green: 0.8822068572, blue: 0.8323535323, alpha: 1))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
+       // imageView.layer.cornerRadius = 10
         return imageView
     }()
     

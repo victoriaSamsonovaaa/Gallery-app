@@ -10,7 +10,10 @@ import SwiftData
 import UIKit
 
 class PhotoDetailViewController:UIViewController {
+    
     var viewModel: PhotoViewModel!
+    var photos: [SinglePhotoModel] = []
+    var currentIndex: Int = 0
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -30,7 +33,7 @@ class PhotoDetailViewController:UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 12
+      //  imageView.layer.cornerRadius = 12
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -61,12 +64,12 @@ class PhotoDetailViewController:UIViewController {
         label.text = "Like this photo"
         return label
     }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         setLayout()
+        setupGestures()
         bindViewModel()
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
@@ -89,7 +92,7 @@ class PhotoDetailViewController:UIViewController {
         updateLikeButton()
         updateLikeLabel()
         if !viewModel.isFav {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 if let navController = self.navigationController {
                     if let favVC = navController.viewControllers.first(where: { $0 is FavouritesPhotosViewController }) as? FavouritesPhotosViewController {
                         favVC.viewModel.refreshFavorites()
@@ -110,6 +113,39 @@ class PhotoDetailViewController:UIViewController {
         let imageName = viewModel.isFav ? "heart.fill" : "heart"
         likeButton.setImage(UIImage(systemName: imageName), for: .normal)
     }
+    
+    private func setupGestures() {
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeLeft.direction = .left
+        view.addGestureRecognizer(swipeLeft)
+
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeRight.direction = .right
+        view.addGestureRecognizer(swipeRight)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UISwipeGestureRecognizer) {
+        if gesture.direction == .left {
+            navigateToNext()
+        } else if gesture.direction == .right {
+            navigateToPrevious()
+        }
+    }
+    
+    private func navigateToPrevious() {
+        guard currentIndex > 0 else { return }
+        currentIndex -= 1
+        viewModel = PhotoViewModel(photo: photos[currentIndex])
+        bindViewModel()
+    }
+    
+    private func navigateToNext() {
+        guard currentIndex < photos.count - 1 else { return }
+        currentIndex += 1
+        viewModel = PhotoViewModel(photo: photos[currentIndex])
+        bindViewModel()
+    }
+
     
     private func setLayout() {
         let horizStackView = UIStackView(arrangedSubviews: [likeButton, likeDescription])
