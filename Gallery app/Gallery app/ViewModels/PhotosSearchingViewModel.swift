@@ -14,6 +14,7 @@ class PhotosSearchingViewModel {
     private let dataFetcher = DataFetcher()
     private let coreDataManager = CoreDataManager.shared
     var photos: [SinglePhotoModel] = []
+    var isFav: Bool = false
     
     var onPhotosUpdated: (() -> Void)?
     
@@ -27,8 +28,14 @@ class PhotosSearchingViewModel {
         }
     }
     
-    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) {
-        coreDataManager.toggleFavorite(photo: photo, image: image)
+    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) -> Bool {
+        
+        if coreDataManager.toggleFavorite(photo: photo, image: image) {
+            isFav = true
+        } else {
+            isFav = false
+        }
+        return isFav
     }
     
     func clearPhotos() {

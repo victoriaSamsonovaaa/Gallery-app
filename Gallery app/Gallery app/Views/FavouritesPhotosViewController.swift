@@ -40,6 +40,7 @@ class FavouritesPhotosViewController: UICollectionViewController, UICollectionVi
         let photo = viewModel.favPhotos[indexPath.item]
         let singlePhotoModel = SinglePhotoModel(id: photo.id!, width: Int(photo.width), height: Int(photo.height), urls: nil, description: photo.photoDescription)
         let photoViewModel = PhotoViewModel(photo: singlePhotoModel)
+        photoViewModel.isFav = true
         cell.viewModel = photoViewModel
         return cell
     }

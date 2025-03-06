@@ -11,10 +11,17 @@ import UIKit
 class SinglePhotoCell: UICollectionViewCell {
     
     static let reuseId = "singlePhotoCell"
+    private var isFav: Bool = false
+    
+    var viewModel: PhotoViewModel! {
+        didSet {
+            photoImageView.image = nil
+            bindViewModel()
+        }
+    }
     
     private let likeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "heart"), for: .normal)
         button.tintColor = .red
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -29,12 +36,8 @@ class SinglePhotoCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 10
         return imageView
     }()
-    var viewModel: PhotoViewModel! {
-        didSet {
-            photoImageView.image = nil
-            bindViewModel()
-        }
-    }
+
+
     
     var photo: SinglePhotoModel!
     
@@ -51,6 +54,8 @@ class SinglePhotoCell: UICollectionViewCell {
                 self?.photoImageView.image = image
             }
         }
+        isFav = viewModel.isFav
+        updateLikeButton()
     }
     
     private func setPhoto() {
@@ -73,9 +78,15 @@ class SinglePhotoCell: UICollectionViewCell {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
     
+    private func updateLikeButton() {
+        let imageName = isFav ? "heart.fill" : "heart"
+        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+    }
+    
     @objc private func likeButtonTapped() {
         guard let image = photoImageView.image else { return }
-        viewModel.toggleFavorite(image: image)
+        isFav = viewModel.toggleFavorite(image: image)
+        updateLikeButton()
     }
     
     override init(frame: CGRect) {

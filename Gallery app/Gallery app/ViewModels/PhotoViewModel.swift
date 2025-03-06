@@ -12,9 +12,11 @@ class PhotoViewModel {
     private let coreDataManager = CoreDataManager.shared
     let photo: SinglePhotoModel
     private(set) var image: UIImage?
+    var isFav: Bool = false
 
     init(photo: SinglePhotoModel) {
         self.photo = photo
+        self.isFav = CoreDataManager.shared.isPhotoInFavorites(photoID: photo.id)
         loadImageFromCoreData()
     }
 
@@ -39,8 +41,13 @@ class PhotoViewModel {
         }
     }
     
-    func toggleFavorite(image: UIImage) {
-        coreDataManager.toggleFavorite(photo: photo, image: image)
+    func toggleFavorite(image: UIImage) -> Bool {
+        if coreDataManager.toggleFavorite(photo: photo, image: image) {
+            isFav = true
+        } else {
+            isFav = false
+        }
+        return isFav
     }
 }
 

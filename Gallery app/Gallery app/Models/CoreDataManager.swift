@@ -79,6 +79,11 @@ class CoreDataManager {
         return nil
     }
     
+    func isPhotoInFavorites(photoID: String) -> Bool {
+        return fetchImageData(for: photoID) != nil
+    }
+
+    
     private func isPhotoInFavorites(photoID: String) -> Photo? {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
@@ -91,11 +96,13 @@ class CoreDataManager {
         }
     }
     
-    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) {
+    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) -> Bool {
         let context = persistentContainer.viewContext
+        var isFav: Bool = false
         if let existingPhoto = isPhotoInFavorites(photoID: photo.id) {
             context.delete(existingPhoto)
             print("removed from favorites")
+            isFav = false
         } else {
             let favoritePhoto = Photo(context: context)
             favoritePhoto.id = photo.id
@@ -104,8 +111,10 @@ class CoreDataManager {
             favoritePhoto.height = Int16(photo.height)
             favoritePhoto.content = image.jpegData(compressionQuality: 0.9)
             print("added to favorites")
+            isFav = true
         }
         saveContext(context: context)
+        return isFav
     }
 
 }

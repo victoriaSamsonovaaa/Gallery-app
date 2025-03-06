@@ -11,6 +11,7 @@ import UIKit
 class FavouritesPhotosViewModel {
     private let coreDataManager = CoreDataManager.shared
     var favPhotos: [Photo] = []
+    var isFav: Bool = false
 
     init() {
         loadFavorites()
@@ -23,4 +24,5 @@ class FavouritesPhotosViewModel {
     func refreshFavorites() {
         loadFavorites()
     }
+    
 }

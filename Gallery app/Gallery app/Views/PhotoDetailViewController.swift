@@ -12,11 +12,6 @@ import UIKit
 class PhotoDetailViewController:UIViewController {
     var viewModel: PhotoViewModel!
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        self.tabBarController?.tabBar.isHidden = true
-//    }
-    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -87,7 +82,9 @@ class PhotoDetailViewController:UIViewController {
     
     @objc private func likeButtonTapped() {
         guard let image = imageView.image else { return }
-        viewModel.toggleFavorite(image: image)
+        if viewModel.toggleFavorite(image: image) {
+            
+        }
     }
     
     private func setLayout() {
