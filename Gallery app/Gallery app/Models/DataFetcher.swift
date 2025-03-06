@@ -9,12 +9,12 @@ import Foundation
 
 class DataFetcher {
     
-    var networkServise = NetworkService()
+    var networkService = NetworkService()
     
-    func fetchImages(queryWord: String, completion: @escaping (ResultsModel?) ->()) {
-        networkServise.mainRequest(queryWord: queryWord) { (data, error) in
+    func fetchImages(queryWord: String, page: Int, completion: @escaping (ResultsModel?) -> Void) {
+        networkService.mainRequest(queryWord: queryWord, page: page) { (data, error) in
             if let error = error {
-                print("error recieved requesting data \(error.localizedDescription)")
+                print("error received requesting data \(error.localizedDescription)")
                 completion(nil)
             }
             let decode = self.customDecode(type: ResultsModel.self, from: data)

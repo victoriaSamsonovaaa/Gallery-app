@@ -8,28 +8,27 @@
 import Foundation
 
 class NetworkService {
-    func mainRequest(queryWord: String, completion: @escaping (Data?, Error?) -> Void) {
-        let url = self.returnURL(queryWord: queryWord)
+    func mainRequest(queryWord: String, page: Int, completion: @escaping (Data?, Error?) -> Void) {
+        let url = self.returnURL(queryWord: queryWord, page: page)
         var request = URLRequest(url: url)
         let myAPI = self.getAPI()
         request.setValue("Client-ID \(myAPI)", forHTTPHeaderField: "Authorization")
-        //request.allHTTPHeaderFields = prepareHeader()
-        request.httpMethod = "get"
+        request.httpMethod = "GET"
         let task = createDataTask(from: request, completion: completion)
         task.resume()
     }
     
-    private func returnURL(queryWord: String?) -> URL {
-        var parametrs = [String: String]()
-        parametrs["query"] = queryWord
-        parametrs["page"] = String(1)
-        parametrs["per_page"] = String(30)
-        
+    private func returnURL(queryWord: String?, page: Int) -> URL {
+        var parameters = [String: String]()
+        parameters["query"] = queryWord
+        parameters["page"] = String(page)
+        parameters["per_page"] = String(30)
+
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.unsplash.com"
         components.path = "/search/photos"
-        components.queryItems = parametrs.map {
+        components.queryItems = parameters.map {
             URLQueryItem(name: $0, value: $1)
         }
         return components.url!

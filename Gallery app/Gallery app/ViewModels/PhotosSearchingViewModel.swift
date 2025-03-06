@@ -10,37 +10,50 @@ import UIKit
 import CoreData
 
 class PhotosSearchingViewModel {
-    
+
     private let dataFetcher = DataFetcher()
     private let coreDataManager = CoreDataManager.shared
     var photos: [SinglePhotoModel] = []
     var isFav: Bool = false
-    
+    private var currentPage = 1
+    private var isLoading = false
+    private var hasMorePages = true
+
     var onPhotosUpdated: (() -> Void)?
-    
+
     func searchPhotos(query: String) {
         guard !query.isEmpty else { return }
-        
-        dataFetcher.fetchImages(queryWord: query) { [weak self] searchResults in
-            guard let fetchedPhotos = searchResults else { return }
-            self?.photos = fetchedPhotos.results
+        currentPage = 1
+        photos.removeAll()
+        fetchPhotos(query: query)
+    }
+
+    func loadMorePhotos(query: String) {
+        guard hasMorePages, !isLoading else { return }
+        currentPage += 1
+        fetchPhotos(query: query)
+    }
+
+    private func fetchPhotos(query: String) {
+        isLoading = true
+        dataFetcher.fetchImages(queryWord: query, page: currentPage) { [weak self] searchResults in
+            guard let fetchedPhotos = searchResults else {
+                self?.isLoading = false
+                return
+            }
+            self?.photos.append(contentsOf: fetchedPhotos.results)
+            self?.hasMorePages = fetchedPhotos.results.count > 0
+            self?.isLoading = false
             self?.onPhotosUpdated?()
         }
     }
-    
-    func toggleFavorite(photo: SinglePhotoModel, image: UIImage) -> Bool {
-        
-        if coreDataManager.toggleFavorite(photo: photo, image: image) {
-            isFav = true
-        } else {
-            isFav = false
-        }
-        return isFav
-    }
-    
+
     func clearPhotos() {
         photos.removeAll()
-        onPhotosUpdated?()
+        currentPage = 1
+        hasMorePages = true
+        DispatchQueue.main.async {
+            self.onPhotosUpdated?()
+        }
     }
-
 }

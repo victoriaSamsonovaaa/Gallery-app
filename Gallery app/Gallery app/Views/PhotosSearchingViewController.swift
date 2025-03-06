@@ -13,6 +13,8 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
     var viewModel = PhotosSearchingViewModel()
     private var photosInRow: CGFloat = 2
     private let sectionInsets: CGFloat = 14
+    private var isLoadingMorePhotos = false
+    var currentSearchQuery: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +26,7 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         viewModel.onPhotosUpdated = { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
+                self?.isLoadingMorePhotos = false
             }
         }
     }
@@ -57,7 +60,16 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         let height = CGFloat(photo.height) * widthPerItem / CGFloat(photo.width)
         return CGSize(width: widthPerItem, height: height)
     }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
 
+        if offsetY > contentHeight - scrollView.frame.size.height, !isLoadingMorePhotos, let query = currentSearchQuery {
+            isLoadingMorePhotos = true
+            viewModel.loadMorePhotos(query: query)
+        }
+    }
     
     private func creatingNavigationBar() {
         let appTitle = UILabel()
