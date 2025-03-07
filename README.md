@@ -19,6 +19,13 @@ Each thumbnail image is tappable and lead to the Image Detail Screen. It shows t
 - **CoreData**: To store and manage favorite images and display them.
 - **NotificationCenter**: Used for synchronizing favorites images across all views.
 
+## Images
+
+<img width="160" alt="Screenshot 2025-03-07 at 11 55 19" src="https://github.com/user-attachments/assets/34d64a72-3c7d-49fa-8332-17fd29b03fe8" />
+<img width="160" alt="Screenshot 2025-03-07 at 11 55 43" src="https://github.com/user-attachments/assets/36761a46-f313-4fe3-8823-f53d86684987" />
+<img width="160" alt="Screenshot 2025-03-07 at 12 15 34" src="https://github.com/user-attachments/assets/1c743271-f101-4316-a871-3b7baf5fd1f4" />
+<img width="160" alt="Screenshot 2025-03-07 at 11 56 10" src="https://github.com/user-attachments/assets/7105a818-f81e-4b11-8735-0862812609ef" />
+
 ## Installation
 1. To get started with this project, clone the repository to your local machine using the following command: `git clone https://github.com/victoriaSamsonovaaa/Gallery-app`
 2. Open the project in Xcode.
