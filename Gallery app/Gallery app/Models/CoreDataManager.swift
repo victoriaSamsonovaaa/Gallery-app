@@ -23,7 +23,6 @@ class CoreDataManager {
     }
     
     func addPhotoToFav(photo: SinglePhotoModel, image: UIImage) {
-        print("started to add")
         let context = persistentContainer.viewContext
         let favoritePhoto = Photo(context: context)
         
@@ -34,21 +33,21 @@ class CoreDataManager {
         
         favoritePhoto.content = image.jpegData(compressionQuality: 0.9)
         saveContext(context: context)
-        print("added")
+        //print("added")
     }
     
     func removeFromFav(photo: Photo) {
         let context = persistentContainer.viewContext
         context.delete(photo)
         saveContext(context: context)
-        print("removed")
+        //print("removed")
     }
     
     func fetchFavorites() -> [Photo] {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
         do {
-            print("got all favourites")
+            //print("got all favourites")
             return try context.fetch(fetchRequest)
         } catch {
             print("failed to fetch favorites: \(error.localizedDescription)")
@@ -59,7 +58,7 @@ class CoreDataManager {
     private func saveContext(context: NSManagedObjectContext) {
         do {
             try context.save()
-            print("saved successfully")
+            //print("saved successfully")
         } catch {
             print("failed to save context: \(error.localizedDescription)")
         }
@@ -101,7 +100,7 @@ class CoreDataManager {
         var isFav: Bool = false
         if let existingPhoto = fetchPhotoFromFavorites(photoID: photo.id) {
             context.delete(existingPhoto)
-            print("removed from favorites")
+            //print("removed from favorites")
             isFav = false
         } else {
             let favoritePhoto = Photo(context: context)
@@ -110,7 +109,7 @@ class CoreDataManager {
             favoritePhoto.width = Int16(photo.width)
             favoritePhoto.height = Int16(photo.height)
             favoritePhoto.content = image.jpegData(compressionQuality: 0.9)
-            print("added to favorites")
+            //print("added to favorites")
             isFav = true
         }
         saveContext(context: context)

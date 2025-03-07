@@ -11,17 +11,22 @@ class DataFetcher {
     
     var networkService = NetworkService()
     
-    func fetchImages(queryWord: String, page: Int, completion: @escaping (ResultsModel?) -> Void) {
+    func fetchImages(queryWord: String, page: Int, completion: @escaping (ResultsModel?, String?) -> Void) {
         networkService.mainRequest(queryWord: queryWord, page: page) { (data, error) in
             if let error = error {
-                print("error received requesting data \(error.localizedDescription)")
-                completion(nil)
+                print("error fetching images: \(error.localizedDescription)")
+                completion(nil, "Failed to load images. Check your internet connection")
+                return
             }
-            let decode = self.customDecode(type: ResultsModel.self, from: data)
-            completion(decode)
+            guard let decodedData = self.customDecode(type: ResultsModel.self, from: data) else {
+                print("failed to decode response")
+                completion(nil, "Smth went wrong. Please try again later.")
+                return
+            }
+            completion(decodedData, nil)
         }
     }
-    
+
     
     func customDecode<T: Decodable>(type: T.Type, from: Data?) -> T? {
         let decoder = JSONDecoder()

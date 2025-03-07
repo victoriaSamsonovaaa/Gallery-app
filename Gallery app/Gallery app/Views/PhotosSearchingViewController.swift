@@ -22,13 +22,27 @@ class PhotosSearchingViewController: UICollectionViewController, UICollectionVie
         creatingSearchBar()
         setCollectionViewLayout()
         creatingCollectionView()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(updateFavorites), name: NSNotification.Name("FavoritesUpdated"), object: nil)
+        
         viewModel.onPhotosUpdated = { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
                 self?.isLoadingMorePhotos = false
             }
         }
+        
+        viewModel.onError = { [weak self] errorMessage in
+            DispatchQueue.main.async {
+                self?.showErrorAlert(message: errorMessage)
+            }
+        }
+    }
+    
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

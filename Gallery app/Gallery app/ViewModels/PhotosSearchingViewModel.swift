@@ -20,9 +20,13 @@ class PhotosSearchingViewModel {
     private var hasMorePages = true
 
     var onPhotosUpdated: (() -> Void)?
+    var onError: ((String) -> Void)?
 
     func searchPhotos(query: String) {
-        guard !query.isEmpty else { return }
+        guard !query.isEmpty else {
+            onError?("You can't leave searh field empty.")
+            return
+        }
         currentPage = 1
         photos.removeAll()
         fetchPhotos(query: query)
@@ -36,15 +40,24 @@ class PhotosSearchingViewModel {
 
     private func fetchPhotos(query: String) {
         isLoading = true
-        dataFetcher.fetchImages(queryWord: query, page: currentPage) { [weak self] searchResults in
-            guard let fetchedPhotos = searchResults else {
-                self?.isLoading = false
+        dataFetcher.fetchImages(queryWord: query, page: currentPage) { [weak self] searchResults, errorMessage in
+            guard let self = self else { return }
+            if let errorMessage = errorMessage {
+                self.isLoading = false
+                self.onError?(errorMessage)
                 return
             }
-            self?.photos.append(contentsOf: fetchedPhotos.results)
-            self?.hasMorePages = fetchedPhotos.results.count > 0
-            self?.isLoading = false
-            self?.onPhotosUpdated?()
+            guard let fetchedPhotos = searchResults?.results, !fetchedPhotos.isEmpty else {
+                self.isLoading = false
+                self.hasMorePages = false
+                self.onError?("No images found for \"\(query)\". Try a different search term")
+                return
+            }
+            
+            self.photos.append(contentsOf: fetchedPhotos)
+            self.hasMorePages = fetchedPhotos.count > 0
+            self.isLoading = false
+            self.onPhotosUpdated?()
         }
     }
 
