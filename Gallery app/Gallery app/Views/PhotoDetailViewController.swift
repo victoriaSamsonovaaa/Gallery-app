@@ -104,7 +104,6 @@ class PhotoDetailViewController:UIViewController {
         }
     }
 
-
     private func updateLikeLabel() {
         likeDescription.textColor = viewModel.isFav ? .red : .lightGray
     }
@@ -153,11 +152,13 @@ class PhotoDetailViewController:UIViewController {
         horizStackView.spacing = 10
         horizStackView.alignment = .leading
         
-
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
         scrollStackViewContainer.addArrangedSubview(imageView)
         scrollStackViewContainer.addArrangedSubview(descriptionLabel)
+        let spacer = UIView()
+        spacer.heightAnchor.constraint(equalToConstant: 14).isActive = true
+        scrollStackViewContainer.addArrangedSubview(spacer)
         scrollStackViewContainer.addArrangedSubview(horizStackView)
         
         NSLayoutConstraint.activate([
@@ -178,6 +179,7 @@ class PhotoDetailViewController:UIViewController {
 
             horizStackView.leadingAnchor.constraint(equalTo: scrollStackViewContainer.leadingAnchor),
             horizStackView.trailingAnchor.constraint(lessThanOrEqualTo: scrollStackViewContainer.trailingAnchor),
+          //  horizStackView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 30),
 
             likeButton.widthAnchor.constraint(equalToConstant: 24),
             likeButton.heightAnchor.constraint(equalToConstant: 24)

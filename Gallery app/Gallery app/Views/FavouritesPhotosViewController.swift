@@ -58,12 +58,15 @@ class FavouritesPhotosViewController: UICollectionViewController, UICollectionVi
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedPhoto = viewModel.favPhotos[indexPath.item]
-        let singlePhotoModel = SinglePhotoModel(id: selectedPhoto.id!, width: Int(selectedPhoto.width), height: Int(selectedPhoto.height), urls: nil, description: selectedPhoto.photoDescription)
         let detailViewController = PhotoDetailViewController()
-        detailViewController.viewModel = PhotoViewModel(photo: singlePhotoModel)
+        detailViewController.photos = viewModel.favPhotos.map { photo in
+            SinglePhotoModel(id: photo.id!, width: Int(photo.width), height: Int(photo.height), urls: nil, description: photo.photoDescription)
+        }
+        detailViewController.currentIndex = indexPath.item
+        detailViewController.viewModel = PhotoViewModel(photo: detailViewController.photos[indexPath.item])
         navigationController?.pushViewController(detailViewController, animated: true)
     }
+
     
     private func creatingNavigationBar() {
         let appTitle = UILabel()
